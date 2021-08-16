@@ -7,6 +7,7 @@ import Message from '../components/Message'
 
 function HomeScreen() {
     const [number, setNumber] = useState('')
+    const [valid, setValid] = useState(true)
     const dispatch = useDispatch()
     const companyList = useSelector(state => state.companyList)
     const { companies, loading, error } = companyList 
@@ -22,6 +23,22 @@ function HomeScreen() {
         dispatch(listRestrictedCompanies())
     }
 
+    const inputHandler =(e) => {
+        let  inputValue = e.target.value;
+        let newValue = inputValue.replace('-', '')
+        console.log(inputValue)
+        console.log(newValue)
+        if(!isNaN(newValue)){
+            console.log("is number")
+            setValid(true);
+            setNumber(inputValue)
+        }
+        else {
+            console.log("not a number")
+            setValid(false)
+        }
+    }
+
     return (
         <Container>
             <Row >
@@ -31,12 +48,15 @@ function HomeScreen() {
                         placeholder="Enter company business number"
                         aria-label="Company business number"
                         aria-describedby="basic-addon2"
-                        onChange={(e) => setNumber(e.target.value)}
+                        onChange={inputHandler}
                         />
                         <Button variant="primary" id="button-addon2" onClick={searchByNumber}>
                             Search
                         </Button>
                     </InputGroup>
+                    {!valid && (
+            <div style={{ color: "red" }}>Entered Number is invalid</div>
+          )}
                 </Col>
                 <Col className="justify-content-md-center">
                     <Button variant="outline-primary" id="button-addon2" onClick={searchRestrictedCompanies}>
