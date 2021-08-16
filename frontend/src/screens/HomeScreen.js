@@ -4,24 +4,36 @@ import { Container, Row, Col, InputGroup, Button, FormControl, Table } from 'rea
 import { listCompanyByNumber, listRestrictedCompanies } from '../store/actions'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
+import Paginate from '../components/Paginate'
 
-function HomeScreen() {
+function HomeScreen({history}) {
     const [number, setNumber] = useState('')
     const [valid, setValid] = useState(true)
+    const [display, setDisplay] = useState(false)
+    const [restrictedList, setRestrictedList] = useState(false)
     const dispatch = useDispatch()
     const companyList = useSelector(state => state.companyList)
-    const { companies, loading, error } = companyList 
+    const { companies, loading, error, page, pages } = companyList 
+    let keyword = history.location.search
 
     const searchByNumber = (e) => {
         e.preventDefault()
         if(number) {
             dispatch(listCompanyByNumber(number))
-        }    
+        }
+        setDisplay(true)
         
     }
     const searchRestrictedCompanies = () =>{
         dispatch(listRestrictedCompanies())
+        setDisplay(true)
+        setRestrictedList(true)
     }
+    useEffect(() => {
+        if(restrictedList){
+            dispatch(listRestrictedCompanies(keyword))
+        }    
+    }, [dispatch, keyword, restrictedList])
 
     const inputHandler =(e) => {
         let  inputValue = e.target.value;
@@ -55,8 +67,8 @@ function HomeScreen() {
                         </Button>
                     </InputGroup>
                     {!valid && (
-            <div style={{ color: "red" }}>Entered Number is invalid</div>
-          )}
+                        <div style={{ color: "red" }}>Entered Number is invalid</div>
+                    )}
                 </Col>
                 <Col className="justify-content-md-center">
                     <Button variant="outline-primary" id="button-addon2" onClick={searchRestrictedCompanies}>
@@ -65,7 +77,9 @@ function HomeScreen() {
                 </Col>
             </Row>
             <br></br>
-            { loading ? <Loader />
+            {display && 
+                <div>
+                { loading ? <Loader />
                 :error ? <Message variant='danger'>{error}</Message>
                     :
                     <div>
@@ -98,10 +112,14 @@ function HomeScreen() {
                             </tbody>
                             
                         </Table>
-                        
+                        <Paginate pages={pages} page={page}/>
 
                     </div>
             }
+                
+            </div>}
+
+
         </Container>
     )
 }

@@ -13,11 +13,19 @@ import {
         case COMPANY_LIST_BYNUMBER_REQUEST:
         case COMPANY_LIST_RESTRICT_REQUEST:
             return {loading:true, companies: []}
-        case COMPANY_LIST_BYNUMBER_SUCCESS:            
-        case COMPANY_LIST_RESTRICT_SUCCESS:
+        case COMPANY_LIST_BYNUMBER_SUCCESS:
             return {
                 loading:false, 
                 companies: action.payload, 
+                page: 1,
+                pages: 1,
+            }
+        case COMPANY_LIST_RESTRICT_SUCCESS:
+            return {
+                loading:false, 
+                companies: action.payload.companies, 
+                page: action.payload.page,
+                pages: action.payload.pages,
             }
         case COMPANY_LIST_BYNUMBER_FAIL:
         case COMPANY_LIST_RESTRICT_FAIL:
