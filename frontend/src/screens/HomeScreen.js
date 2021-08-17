@@ -38,15 +38,11 @@ function HomeScreen({history}) {
     const inputHandler =(e) => {
         let  inputValue = e.target.value;
         let newValue = inputValue.replace('-', '')
-        console.log(inputValue)
-        console.log(newValue)
         if(!isNaN(newValue)){
-            console.log("is number")
             setValid(true);
             setNumber(inputValue)
         }
         else {
-            console.log("not a number")
             setValid(false)
         }
     }

@@ -67,15 +67,14 @@ def fetchCsvData(request):
     newHash = hashlib.sha1(pd.util.hash_pandas_object(df).values).hexdigest()
     if(newHash != globalHash):
         globalHash = newHash
-        Company.objects.all().delete()
         for i in range(len(df)):
-            Company.objects.create(id=df.iloc[i][0],
-                                   company_name=df.iloc[i][1],
-                                   description=df.iloc[i][2],
-                                   tagline=df.iloc[i][3],
-                                   company_email=df.iloc[i][4],
-                                   business_number=df.iloc[i][5],
-                                   restricted=df.iloc[i][6])
+            Company.objects.update_or_create(id=df.iloc[i][0],
+                                             company_name=df.iloc[i][1],
+                                             description=df.iloc[i][2],
+                                             tagline=df.iloc[i][3],
+                                             company_email=df.iloc[i][4],
+                                             business_number=df.iloc[i][5],
+                                             restricted=df.iloc[i][6])
         return Response('Data loaded')
     else:
         return Response('No change')
