@@ -12,6 +12,7 @@ from .serializers import CompanySerializer
 
 import ssl
 import pandas as pd
+import hashlib
 
 
 def is_businessNumber_valid(string):
@@ -34,6 +35,7 @@ def getCompany(request, pk):
 @api_view(['GET'])
 def getRestrictedCompanies(request):
     companies = Company.objects.filter(restricted="Yes")
+    total = len(companies)
     page = request.query_params.get('page')
     paginator = Paginator(companies, 100)
     try:
@@ -50,22 +52,30 @@ def getRestrictedCompanies(request):
     print('Page:', page)
 
     serializer = CompanySerializer(companies, many=True)
-    return Response({'companies': serializer.data, 'page': page, 'pages': paginator.num_pages})
+    return Response({'companies': serializer.data, 'page': page, 'pages': paginator.num_pages, 'total': total})
+
+
+globalHash = 0
 
 
 @api_view(['GET'])
 def fetchCsvData(request):
+    global globalHash
     ssl._create_default_https_context = ssl._create_unverified_context
     url = "https://storage.googleapis.com/snappy-recruitment-test/faux_id_fake_companies.csv"
     df = pd.read_csv(url)
-
-    Company.objects.all().delete()
-    for i in range(len(df)):
-        Company.objects.create(id=df.iloc[i][0],
-                               company_name=df.iloc[i][1],
-                               description=df.iloc[i][2],
-                               tagline=df.iloc[i][3],
-                               company_email=df.iloc[i][4],
-                               business_number=df.iloc[i][5],
-                               restricted=df.iloc[i][6])
-    return Response('Data loaded')
+    newHash = hashlib.sha1(pd.util.hash_pandas_object(df).values).hexdigest()
+    if(newHash != globalHash):
+        globalHash = newHash
+        Company.objects.all().delete()
+        for i in range(len(df)):
+            Company.objects.create(id=df.iloc[i][0],
+                                   company_name=df.iloc[i][1],
+                                   description=df.iloc[i][2],
+                                   tagline=df.iloc[i][3],
+                                   company_email=df.iloc[i][4],
+                                   business_number=df.iloc[i][5],
+                                   restricted=df.iloc[i][6])
+        return Response('Data loaded')
+    else:
+        return Response('No change')

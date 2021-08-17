@@ -19,6 +19,7 @@ import {
                 companies: action.payload, 
                 page: 1,
                 pages: 1,
+                total: action.payload.length
             }
         case COMPANY_LIST_RESTRICT_SUCCESS:
             return {
@@ -26,6 +27,7 @@ import {
                 companies: action.payload.companies, 
                 page: action.payload.page,
                 pages: action.payload.pages,
+                total: action.payload.total,
             }
         case COMPANY_LIST_BYNUMBER_FAIL:
         case COMPANY_LIST_RESTRICT_FAIL:

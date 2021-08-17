@@ -13,7 +13,7 @@ function HomeScreen({history}) {
     const [restrictedList, setRestrictedList] = useState(false)
     const dispatch = useDispatch()
     const companyList = useSelector(state => state.companyList)
-    const { companies, loading, error, page, pages } = companyList 
+    const { companies, loading, error, page, pages, total } = companyList 
     let keyword = history.location.search
 
     const searchByNumber = (e) => {
@@ -62,12 +62,12 @@ function HomeScreen({history}) {
                         aria-describedby="basic-addon2"
                         onChange={inputHandler}
                         />
-                        <Button variant="primary" id="button-addon2" onClick={searchByNumber}>
+                        <Button variant="primary" id="button-addon2" onClick={searchByNumber} disabled={!valid}>
                             Search
                         </Button>
                     </InputGroup>
                     {!valid && (
-                        <div style={{ color: "red" }}>Entered Number is invalid</div>
+                        <div style={{ color: "red" }}>Only 0-9 and '-' is accepted</div>
                     )}
                 </Col>
                 <Col className="justify-content-md-center">
@@ -83,7 +83,7 @@ function HomeScreen({history}) {
                 :error ? <Message variant='danger'>{error}</Message>
                     :
                     <div>
-                        
+                        <p>{total} result(s) found</p>
                         <Table className="table table-hover" >
                             <thead>
                                 <tr>
