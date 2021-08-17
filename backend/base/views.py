@@ -10,6 +10,10 @@ from .models import *
 from .serializers import CompanySerializer
 
 
+import ssl
+import pandas as pd
+
+
 def is_businessNumber_valid(string):
     charRe = re.compile(r'[^-0-9]')
     str = charRe.search(string)
@@ -47,3 +51,21 @@ def getRestrictedCompanies(request):
 
     serializer = CompanySerializer(companies, many=True)
     return Response({'companies': serializer.data, 'page': page, 'pages': paginator.num_pages})
+
+
+@api_view(['GET'])
+def fetchCsvData(request):
+    ssl._create_default_https_context = ssl._create_unverified_context
+    url = "https://storage.googleapis.com/snappy-recruitment-test/faux_id_fake_companies.csv"
+    df = pd.read_csv(url)
+
+    Company.objects.all().delete()
+    for i in range(len(df)):
+        Company.objects.create(id=df.iloc[i][0],
+                               company_name=df.iloc[i][1],
+                               description=df.iloc[i][2],
+                               tagline=df.iloc[i][3],
+                               company_email=df.iloc[i][4],
+                               business_number=df.iloc[i][5],
+                               restricted=df.iloc[i][6])
+    return Response('Data loaded')
