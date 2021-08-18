@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-443+xerfr!&o*1z!x5pj#y8y9)%h0y^rf1s_@qph8+1xk(bnfo
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost',
-                 'https://pwcchallenge.herokuapp.com/']
+                 'pwcchallenge.herokuapp.com']
 
 
 # Application definition
