@@ -35,7 +35,6 @@ def getCompany(request, pk):
 @api_view(['GET'])
 def getRestrictedCompanies(request):
     companies = Company.objects.filter(restricted="Yes")
-    total = len(companies)
     page = request.query_params.get('page')
     paginator = Paginator(companies, 100)
     try:
@@ -52,7 +51,7 @@ def getRestrictedCompanies(request):
     print('Page:', page)
 
     serializer = CompanySerializer(companies, many=True)
-    return Response({'companies': serializer.data, 'page': page, 'pages': paginator.num_pages, 'total': total})
+    return Response({'companies': serializer.data, 'page': page, 'pages': paginator.num_pages, 'total': paginator.count})
 
 
 globalHash = 0
@@ -61,6 +60,10 @@ globalHash = 0
 @api_view(['GET'])
 def fetchCsvData(request):
     global globalHash
+
+    # fix the common issue on macOS.
+    # The point is Python 3 no longer counts on MacOS’ openSSL.
+    # It depends on its own openSSL bundled which doesn’t have access to MacOS’ root certificates.
     ssl._create_default_https_context = ssl._create_unverified_context
     url = "https://storage.googleapis.com/snappy-recruitment-test/faux_id_fake_companies.csv"
     df = pd.read_csv(url)

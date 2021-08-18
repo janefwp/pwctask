@@ -5,6 +5,9 @@ from base.models import Company
 
 
 def run():
+    # fix the common issue on macOS.
+    # The point is Python 3 no longer counts on MacOS’ openSSL.
+    # It depends on its own openSSL bundled which doesn’t have access to MacOS’ root certificates.
     ssl._create_default_https_context = ssl._create_unverified_context
     url = "https://storage.googleapis.com/snappy-recruitment-test/faux_id_fake_companies.csv"
     df = pd.read_csv(url)
