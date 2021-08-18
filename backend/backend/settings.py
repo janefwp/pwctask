@@ -60,7 +60,9 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'frontend/build')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,10 +83,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pwctask',
-        'USER': 'root',
+        'NAME': 'pwctaskaws',
+        'USER': 'admin',
         'PASSWORD': os.environ.get('DB_PASS'),
-        'HOST': '127.0.0.1',
+        'HOST': 'pwctaskaws.cfnfblrbtlps.us-east-1.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
@@ -135,9 +137,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+    BASE_DIR / 'frontend/build/static'
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+CSV_FILE_URL = 'https://storage.googleapis.com/snappy-recruitment-test/faux_id_fake_companies.csv'

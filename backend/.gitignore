@@ -1,0 +1,8 @@
+env/
+node_modules/
+backend/__pycache__/
+base/__pycache__/
+base/migrations/__pycache__/
+
+base/urls/__pycache__/
+base/views/__pycache__/

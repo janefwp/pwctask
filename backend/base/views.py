@@ -8,11 +8,13 @@ import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import *
 from .serializers import CompanySerializer
-
+from django.conf import settings
 
 import ssl
 import pandas as pd
 import hashlib
+
+cvs_url = settings.CSV_FILE_URL
 
 
 def is_businessNumber_valid(string):
@@ -65,8 +67,7 @@ def fetchCsvData(request):
     # The point is Python 3 no longer counts on MacOS’ openSSL.
     # It depends on its own openSSL bundled which doesn’t have access to MacOS’ root certificates.
     ssl._create_default_https_context = ssl._create_unverified_context
-    url = "https://storage.googleapis.com/snappy-recruitment-test/faux_id_fake_companies.csv"
-    df = pd.read_csv(url)
+    df = pd.read_csv(cvs_url)
     newHash = hashlib.sha1(pd.util.hash_pandas_object(df).values).hexdigest()
     if(newHash != globalHash):
         globalHash = newHash
