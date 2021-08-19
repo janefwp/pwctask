@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-443+xerfr!&o*1z!x5pj#y8y9)%h0y^rf1s_@qph8+1xk(bnfo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost',
+ALLOWED_HOSTS = ['127.0.0.1',
                  'pwcchallenge.herokuapp.com']
 
 
@@ -153,6 +153,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+SECURE_SSL_REDIRECT = False
 
 CSV_FILE_URL = 'https://storage.googleapis.com/snappy-recruitment-test/faux_id_fake_companies.csv'
 

@@ -25,7 +25,7 @@ function HomeScreen({history}) {
         
     }
     const searchRestrictedCompanies = () =>{
-        dispatch(listRestrictedCompanies())
+        // dispatch(listRestrictedCompanies())
         setDisplay(true)
         setRestrictedList(true)
     }
