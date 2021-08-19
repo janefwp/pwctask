@@ -12,7 +12,10 @@ from django.conf import settings
 
 import ssl
 import pandas as pd
-import hashlib
+import urllib
+import time
+import datetime
+
 
 cvs_url = settings.CSV_FILE_URL
 
@@ -56,21 +59,32 @@ def getRestrictedCompanies(request):
     return Response({'companies': serializer.data, 'page': page, 'pages': paginator.num_pages, 'total': paginator.count})
 
 
-globalHash = 0
+lastModifiedTime = 0
+
+
+def isCsvUpdated():
+    global lastModifiedTime
+    req = urllib.request.Request(cvs_url, method='HEAD')
+    f = urllib.request.urlopen(req)
+    last_modified = f.headers['Last-Modified']
+    if last_modified:
+        modificationTime = time.mktime(datetime.datetime.strptime(
+            last_modified[:-4], "%a, %d %b %Y %H:%M:%S").timetuple())
+        if (modificationTime != lastModifiedTime):
+            lastModifiedTime = modificationTime
+            return True
+        else:
+            return False
 
 
 @api_view(['GET'])
 def fetchCsvData(request):
-    global globalHash
-
     # fix the common issue on macOS.
     # The point is Python 3 no longer counts on MacOS’ openSSL.
     # It depends on its own openSSL bundled which doesn’t have access to MacOS’ root certificates.
     ssl._create_default_https_context = ssl._create_unverified_context
-    df = pd.read_csv(cvs_url)
-    newHash = hashlib.sha1(pd.util.hash_pandas_object(df).values).hexdigest()
-    if(newHash != globalHash):
-        globalHash = newHash
+    if (isCsvUpdated() == True):
+        df = pd.read_csv(cvs_url)
         for i in range(len(df)):
             Company.objects.update_or_create(id=df.iloc[i][0],
                                              company_name=df.iloc[i][1],

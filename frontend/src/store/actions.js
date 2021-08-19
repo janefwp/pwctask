@@ -12,7 +12,7 @@ import {
  export const listRestrictedCompanies = (keyword = '') => async (dispatch) => {
     try {
         dispatch({type: COMPANY_LIST_RESTRICT_REQUEST})  
-        const { data } = await axios.get(`/api/companies${keyword}`)     
+        const { data } = await axios.get(`/api/companies/${keyword}`)     
         dispatch({
             type: COMPANY_LIST_RESTRICT_SUCCESS,
             payload: data
