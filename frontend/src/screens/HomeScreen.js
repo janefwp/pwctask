@@ -14,6 +14,7 @@ function HomeScreen({history}) {
     const dispatch = useDispatch()
     const companyList = useSelector(state => state.companyList)
     const { companies, loading, error, page, pages, total } = companyList 
+    
     let keyword = history.location.search
 
     const searchByNumber = (e) => {
